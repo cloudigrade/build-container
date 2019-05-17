@@ -1,3 +1,6 @@
-FROM python:3.6-alpine
+FROM fedora:29
 
-RUN apk --no-cache --update add postgresql-libs curl-dev python3-dev gcc postgresql-dev musl-dev libffi-dev git
+RUN dnf update -y \
+    && dnf install libcurl-devel gcc openssl-devel python3-devel redhat-rpm-config git -y \
+    && ln -s /usr/bin/pip3.7 /usr/bin/pip \
+    && /usr/bin/pip install --upgrade "urllib3<1.25"
