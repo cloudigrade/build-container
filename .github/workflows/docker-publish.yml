@@ -21,7 +21,7 @@ jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
-    runs-on: docker:stable
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
