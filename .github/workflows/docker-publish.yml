@@ -25,11 +25,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Run tests
-        run: |
-          docker pull $IMAGE_NAME:latest || true
-          docker build --cache-from $IMAGE_NAME:latest .
+      - name: Pull latest image to use as cache
+        run: docker pull $IMAGE_NAME:latest || true
+      - name: Test building docker image
+        run: docker build --cache-from $IMAGE_NAME:latest .
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
@@ -43,11 +42,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
-
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      
+      - name: Pull latest image to use as cache
+        run: docker pull $IMAGE_NAME:latest || true
+
+      - name: Build image
+        run: docker build --cache-from $IMAGE_NAME:latest . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Push image
         run: |
