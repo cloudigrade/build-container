@@ -1,0 +1,37 @@
+name: Tag
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/build-container
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  test-docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    container:
+      image: docker:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker pull $IMAGE_NAME:latest || true
+      - run: docker build --cache-from $IMAGE_NAME:latest .
+
+  deploy-build-and-push-tagged-image:
+    name: Build and Push Tagged Image
+    env:
+      COMMIT_TAG: ${{ github.event.release.tag_name }}
+      GHCR_BOT_USERNAME: ${{ secrets.GHCR_BOT_USERNAME }}
+      GHCR_BOT_TOKEN: ${{ secrets.GHCR_BOT_TOKEN }}
+    needs: [test-docker]
+    runs-on: ubuntu-latest
+    container:
+      image: docker:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "${GHCR_BOT_TOKEN}" | docker login ghcr.io -u ${GHCR_BOT_USERNAME} --password-stdin
+      - run: docker pull $IMAGE_NAME:latest || true
+      - run: docker build --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${COMMIT_TAG} .
+      - run: docker push ${IMAGE_NAME}:${COMMIT_TAG}
