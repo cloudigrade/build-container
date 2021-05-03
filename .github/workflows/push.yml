@@ -3,7 +3,10 @@ name: Push
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/build-container
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: 30 3 * * SUN
 
 jobs:
   test-docker:
