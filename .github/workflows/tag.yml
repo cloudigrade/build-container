@@ -15,7 +15,7 @@ jobs:
     container:
       image: docker:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: docker pull $IMAGE_NAME:latest || true
       - run: docker build --cache-from $IMAGE_NAME:latest .
 
@@ -30,7 +30,7 @@ jobs:
     container:
       image: docker:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: echo "${GHCR_BOT_TOKEN}" | docker login ghcr.io -u ${GHCR_BOT_USERNAME} --password-stdin
       - run: docker pull $IMAGE_NAME:latest || true
       - run: docker build --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${COMMIT_TAG} .
