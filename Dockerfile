@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.7-1049
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
 
 ENV PATH="$PATH:/usr/pgsql-12/bin"
 
